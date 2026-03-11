@@ -15,7 +15,7 @@ export default defineConfig({
         name: 'GymApp',
         short_name: 'GymApp',
         description: 'Offline-first personal workout tracker',
-        theme_color: '#8b5cf6',
+        theme_color: '#0f0f13',
         background_color: '#0f0f13',
         display: 'standalone',
         orientation: 'portrait',
