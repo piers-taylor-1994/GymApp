@@ -9,9 +9,11 @@ export function setTheme(t) {
   theme.value = t
   document.documentElement.setAttribute('data-theme', t)
   localStorage.setItem('theme', t)
+  const metaTheme = document.querySelector('meta[name="theme-color"]')
+  if (metaTheme) metaTheme.setAttribute('content', t === 'dark' ? '#0f0f13' : '#f4f4f8')
 }
 // Apply on load
-document.documentElement.setAttribute('data-theme', theme.value)
+setTheme(theme.value)
 
 // ===== FONT SIZE =====
 const FONT_SIZES  = [12, 13, 14, 15, 16, 17, 18]
