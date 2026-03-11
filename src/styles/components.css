@@ -63,7 +63,6 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 .topbar-title { font-size: 1.333rem; font-weight: 700; letter-spacing: -0.3px; }
