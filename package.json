@@ -1,0 +1,26 @@
+{
+  "name": "gymapp",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.8.2",
+    "chart.js": "^4.5.1",
+    "dexie": "^4.3.0",
+    "preact": "^10.27.2",
+    "wouter": "^3.9.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.2",
+    "gh-pages": "^6.3.0",
+    "vite": "^7.3.1",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
+  }
+}

@@ -1,0 +1,107 @@
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-dark: #6d28d9;
+  --accent-muted: rgba(139, 92, 246, 0.15);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --tab-height: 68px;
+  --transition: 0.18s ease;
+  --font-size-base: 15px;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f13;
+  --bg2: #18181f;
+  --bg3: #222230;
+  --bg4: #2a2a3a;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f5;
+  --text2: #a0a0b8;
+  --text3: #606078;
+  --card: #18181f;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+[data-theme="light"] {
+  --bg: #f4f4f8;
+  --bg2: #ffffff;
+  --bg3: #ebebf3;
+  --bg4: #e0e0ec;
+  --border: rgba(0,0,0,0.08);
+  --text: #111118;
+  --text2: #555568;
+  --text3: #9090a8;
+  --card: #ffffff;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: var(--font-size-base);
+  transition: font-size 0.2s ease;
+}
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== LAYOUT ===== */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== INPUTS ===== */
+input, textarea, select {
+  background: var(--bg3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.933rem;
+  outline: none;
+  transition: border-color var(--transition);
+  width: 100%;
+  padding: 10px 12px;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes reorderUp {
+  0%   { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+@keyframes reorderDown {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
