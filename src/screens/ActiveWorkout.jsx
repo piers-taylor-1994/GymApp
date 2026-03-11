@@ -591,6 +591,7 @@ export function ActiveWorkout({ onFinish, onDiscard }) {
   const [showDiscardModal, setShowDiscardModal] = useState(false)
   const [showAddExModal, setShowAddExModal]     = useState(false)
   const [elapsed, setElapsed] = useState(0)
+  const [restTimerKey, setRestTimerKey] = useState(null) // null = hidden; number = shown & reset
 
   const wo = activeWorkout.value
   useEffect(() => {
@@ -610,6 +611,7 @@ export function ActiveWorkout({ onFinish, onDiscard }) {
 
   async function handleComplete(idx, sets) {
     await completeExercise(idx, sets)
+    setRestTimerKey(k => (k ?? 0) + 1) // show/reset rest timer on each completion
     // Scroll to next active after re-render
     setTimeout(() => {
       const nextIdx = activeWorkout.value?.exercises.findIndex(e => e.state === 'active')
@@ -675,8 +677,8 @@ export function ActiveWorkout({ onFinish, onDiscard }) {
             </div>
           </div>
 
-          {/* Rest timer */}
-          <RestTimer />
+          {/* Rest timer — only shown after first exercise completed, resets on each completion */}
+          {restTimerKey !== null && <RestTimer key={restTimerKey} />}
 
           {/* Exercise list */}
           <div style="display:flex;flex-direction:column;gap:10px;">
