@@ -78,8 +78,8 @@ async function clearAllData() {
     db.templateExercises.clear(),
     db.prs.clear(),
   ])
-  // Re-seed flag so seed runs again
-  localStorage.removeItem('gymapp_seeded')
+  localStorage.clear()
+  window.location.reload()
 }
 
 // ---- Section separator ---------------------------------------------------
@@ -184,8 +184,6 @@ export function Settings() {
 
   async function handleClearConfirm() {
     await clearAllData()
-    setShowClear(false)
-    showToast('All data cleared')
   }
 
   return (
