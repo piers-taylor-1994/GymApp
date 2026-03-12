@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks'
-import { activeWorkout, startWorkout } from '../store/store.js'
+import { activeWorkout, startWorkout, userName } from '../store/store.js'
 import db from '../db/db.js'
 import { WorkoutDetail } from '../components/WorkoutDetail.jsx'
 
@@ -114,7 +114,7 @@ export function Dashboard({ onStartWorkout, onNavigate }) {
     <div style="display:flex;flex-direction:column;flex:1;min-height:0;">
       <div class="topbar">
         <div>
-          <div class="topbar-title">{greeting}, Piers</div>
+          <div class="topbar-title">{greeting}, {userName.value}</div>
           <div style="font-size:0.8rem;color:var(--text2);margin-top:1px;">
             {today.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>

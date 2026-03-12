@@ -1,6 +1,7 @@
 import { useSignal } from '@preact/signals'
-import { activeWorkout } from './store/store.js'
+import { activeWorkout, userName, setUserName } from './store/store.js'
 import { useSeedOnce } from './db/seed.js'
+import { useState } from 'preact/hooks'
 import { Dashboard } from './screens/Dashboard.jsx'
 import { ActiveWorkout } from './screens/ActiveWorkout.jsx'
 import { ExerciseLibrary } from './screens/ExerciseLibrary.jsx'
@@ -29,11 +30,42 @@ const TABS = [
 export function App() {
   useSeedOnce()
   const tab = useSignal('home')
+  const [nameInput, setNameInput] = useState('')
 
   const goToWorkout = () => { tab.value = 'workout' }
   const goToTab = (t) => { tab.value = t }
 
   const showTabBar = tab.value !== 'workout'
+
+  // Show name prompt on first launch
+  if (!userName.value) {
+    return (
+      <div id="app" style="display:flex;align-items:center;justify-content:center;padding:32px;">
+        <div class="card" style="width:100%;max-width:340px;padding:32px 24px;display:flex;flex-direction:column;gap:20px;animation:popIn 0.25s ease both;">
+          <div>
+            <div style="font-size:1.467rem;font-weight:700;margin-bottom:6px;">Welcome to GymApp</div>
+            <div style="font-size:0.933rem;color:var(--text2);">What should we call you?</div>
+          </div>
+          <input
+            type="text"
+            placeholder="Your name"
+            value={nameInput}
+            onInput={e => setNameInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && nameInput.trim() && setUserName(nameInput.trim())}
+            style="font-size:1rem;"
+            autoFocus
+          />
+          <button
+            class="btn btn-primary btn-full"
+            disabled={!nameInput.trim()}
+            onClick={() => setUserName(nameInput.trim())}
+          >
+            Let's go
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div id="app">

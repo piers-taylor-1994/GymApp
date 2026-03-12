@@ -1,6 +1,13 @@
 import { signal, computed } from '@preact/signals'
 import db from '../db/db.js'
 
+// ===== USER NAME =====
+export const userName = signal(localStorage.getItem('userName') || '')
+export function setUserName(name) {
+  userName.value = name
+  localStorage.setItem('userName', name)
+}
+
 // ===== THEME =====
 export const theme = signal(
   localStorage.getItem('theme') || 'dark'

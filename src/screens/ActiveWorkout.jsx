@@ -324,7 +324,7 @@ function ActiveCard({ ex, idx, onComplete, onAddSet, onRemove }) {
 }
 
 // ── Upcoming exercise card ──────────────────────────────────────────────────
-function UpcomingCard({ ex, idx, onSkipTo }) {
+function UpcomingCard({ ex, idx, onSkipTo, isNext }) {
   const subtitle = ex.type === 'cardio'
     ? `${ex.muscle} · ${ex.equipment}`
     : `${ex.muscle} · ${ex.equipment} · ${ex.sets.length} sets`
@@ -338,7 +338,7 @@ function UpcomingCard({ ex, idx, onSkipTo }) {
             <div style="font-size:0.8rem;color:var(--text2);">{subtitle}</div>
           </div>
         </div>
-        <span class="badge badge-gray">Up next</span>
+        {isNext && <span class="badge badge-gray">Up next</span>}
       </div>
     </div>
   )
@@ -460,11 +460,19 @@ function CardioCard({ ex, idx, onComplete, onRemove }) {
 }
 
 // ── Rest timer ──────────────────────────────────────────────────────────────
-function RestTimer() {
+function RestTimer({ triggerKey }) {
   const defaultSecs = restTimerDefault.value
-  const [secs, setSecs] = useState(defaultSecs)
+  const [secs, setSecs] = useState(0)
   const [total, setTotal] = useState(defaultSecs)
-  const [running, setRunning] = useState(true)
+  const [running, setRunning] = useState(false)
+
+  // When triggerKey increments (exercise completed), auto-start with default duration
+  useEffect(() => {
+    if (triggerKey === null) return
+    setSecs(defaultSecs)
+    setTotal(defaultSecs)
+    setRunning(true)
+  }, [triggerKey])
 
   useEffect(() => {
     if (!running) return
@@ -476,6 +484,12 @@ function RestTimer() {
     }, 1000)
     return () => clearInterval(iv)
   }, [running])
+
+  function start() {
+    setSecs(defaultSecs)
+    setTotal(defaultSecs)
+    setRunning(true)
+  }
 
   function addTime(s) {
     setSecs(prev => {
@@ -492,16 +506,21 @@ function RestTimer() {
         <div>
           <div style="font-size:0.8rem;color:var(--text2);">Rest Timer</div>
           <div style="font-size:1.867rem;font-weight:700;color:var(--accent-light);letter-spacing:-0.5px;font-variant-numeric:tabular-nums;">
-            {formatCountdown(secs)}
+            {running || secs > 0 ? formatCountdown(secs) : formatCountdown(defaultSecs)}
           </div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-sm btn-secondary" onClick={() => addTime(30)}>+30s</button>
-          <button class="btn btn-sm btn-secondary" onClick={() => { setSecs(0); setRunning(false) }}>Skip</button>
+          {!running && secs === 0
+            ? <button class="btn btn-sm btn-primary" onClick={start}>Start</button>
+            : <>
+                <button class="btn btn-sm btn-secondary" onClick={() => addTime(30)}>+30s</button>
+                <button class="btn btn-sm btn-secondary" onClick={() => { setSecs(0); setRunning(false) }}>Skip</button>
+              </>
+          }
         </div>
       </div>
       <div class="progress-bar-wrap" style="margin-top:10px;">
-        <div class="progress-bar-fill" style={{ width: (secs / total * 100) + '%' }}></div>
+        <div class="progress-bar-fill" style={{ width: running || secs > 0 ? (secs / total * 100) + '%' : '100%', opacity: running || secs > 0 ? 1 : 0.25 }}></div>
       </div>
     </div>
   )
@@ -677,35 +696,38 @@ export function ActiveWorkout({ onFinish, onDiscard }) {
             </div>
           </div>
 
-          {/* Rest timer — only shown after first exercise completed, resets on each completion */}
-          {restTimerKey !== null && <RestTimer key={restTimerKey} />}
+          {/* Rest timer — always visible; auto-starts on exercise completion */}
+          <RestTimer triggerKey={restTimerKey} />
 
           {/* Exercise list */}
           <div style="display:flex;flex-direction:column;gap:10px;">
-            {exercises.map((ex, idx) => {
-              if (ex.state === 'done') return <CompletedCard key={idx} ex={ex} idx={idx} />
-              if (ex.state === 'active') return (
-                <div key={idx} id={`ex-${idx}`}>
-                  {ex.type === 'cardio' ? (
-                    <CardioCard
-                      ex={ex}
-                      idx={idx}
-                      onComplete={duration => handleComplete(idx, duration)}
-                      onRemove={() => removeExerciseFromWorkout(idx)}
-                    />
-                  ) : (
-                    <ActiveCard
-                      ex={ex}
-                      idx={idx}
-                      onComplete={sets => handleComplete(idx, sets)}
-                      onAddSet={() => {}}
-                      onRemove={() => removeExerciseFromWorkout(idx)}
-                    />
-                  )}
-                </div>
-              )
-              return <UpcomingCard key={idx} ex={ex} idx={idx} onSkipTo={skipToExercise} />
-            })}
+            {(() => {
+              const firstUpcomingIdx = exercises.findIndex(e => e.state !== 'done' && e.state !== 'active')
+              return exercises.map((ex, idx) => {
+                if (ex.state === 'done') return <CompletedCard key={idx} ex={ex} idx={idx} />
+                if (ex.state === 'active') return (
+                  <div key={idx} id={`ex-${idx}`}>
+                    {ex.type === 'cardio' ? (
+                      <CardioCard
+                        ex={ex}
+                        idx={idx}
+                        onComplete={duration => handleComplete(idx, duration)}
+                        onRemove={() => removeExerciseFromWorkout(idx)}
+                      />
+                    ) : (
+                      <ActiveCard
+                        ex={ex}
+                        idx={idx}
+                        onComplete={sets => handleComplete(idx, sets)}
+                        onAddSet={() => {}}
+                        onRemove={() => removeExerciseFromWorkout(idx)}
+                      />
+                    )}
+                  </div>
+                )
+                return <UpcomingCard key={idx} ex={ex} idx={idx} onSkipTo={skipToExercise} isNext={idx === firstUpcomingIdx} />
+              })
+            })()}
           </div>
 
           {/* Add exercise button */}
